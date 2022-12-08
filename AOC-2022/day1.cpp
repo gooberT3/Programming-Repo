@@ -3,8 +3,8 @@
 #include <vector>
 #include <string>
 
-void getInput(std::vector<int>);
-void display(std::vector<int>);
+void getInput(std::vector<int>&);
+void display(std::vector<int>&);
 
 int main()
 {
@@ -15,30 +15,33 @@ int main()
     return 0;
 }
 
-void display(std::vector<int> calorieCount)
+void display(std::vector<int>& calorieCount)
 {
-    for(int i = 0; i < calorieCount.size(); i++)
+    sort(calorieCount.begin(), calorieCount.end());
+    reverse(calorieCount.begin(), calorieCount.end());
+    std::cout << "The largest calorie count is:\n" << calorieCount.at(0) << std::endl;
+    int total = 0;
+    for(int i = 0; i < 3; i++)
     {
-        std::cout << calorieCount.at(i) << " ";
-        std::cout << "debug";
+        total += calorieCount.at(i);
     }
+    std::cout << "The top three calorie counts sum up to:\n" << total;
 }
 
-void getInput(std::vector<int> calorieCount)
+void getInput(std::vector<int>& calorieCount)
 {
-    
     std::ifstream inputData;                                     
     inputData.open("day1_input.txt");
     if(inputData.is_open())
     {
         std::string currentLine;
-        std::vector<int> calorieCount;
         int count = 0;
         while(std::getline(inputData, currentLine))
         {   
             if(currentLine.empty())
             {
                 calorieCount.push_back(count);
+                count = 0;
             }
             else
             {
