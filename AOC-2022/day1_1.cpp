@@ -2,11 +2,17 @@
 #include <fstream>
 #include <vector>
 
+void fileOperations(std::ifstream&, std::vector<std::string>&);
+
 void openFile(std::ifstream&);
 void closeFile(std::ifstream&);
 void readFile(std::ifstream&, std::vector<std::string>&);
+
+int dataManipulation(std::vector<std::string>&, std::vector<int>&, int);
+
 void storeIndividual(std::vector<std::string>&, std::vector<int>&);
 int findGreatest(std::vector<int>&);
+
 void display(int);
 
 int main() {
@@ -15,24 +21,27 @@ int main() {
     std::vector<std::string> fileData;
 
     //open the file, read and store the data into a vector of strings, close the file
-    openFile(input);
-    readFile(input, fileData);
-    closeFile(input);
+    fileOperations(input, fileData);
 
     //container to store how much individial elf is carrying
     std::vector<int> individual;
 
-    //move data from a vector of strings into a vector of ints
-    storeIndividual(fileData, individual);
-
-    //variable to store data of the greatest amount any of the elves were carrying
+    //manipulate the vector read from the file, calculating each elfs amount,
+    //sorting the values from greatest to least, and find the greatest value
     int greatest;
-    greatest = findGreatest(individual);
+    greatest = dataManipulation(fileData, individual, greatest);
 
     //display the greatest amount of calories to the user
     display(greatest);
 
     return 0;
+}
+
+//manipulating the file object to open, read, and close the file
+void fileOperations(std::ifstream& input, std::vector<std::string>& fileData) {
+    openFile(input);
+    readFile(input, fileData);
+    closeFile(input);
 }
 
 //open the input file
@@ -52,6 +61,14 @@ void readFile(std::ifstream& input, std::vector<std::string>& fileData) {
     while(getline(input, tempStorage)) {
         fileData.push_back(tempStorage);    
     }
+}
+
+//manipulate the data read from the file
+int dataManipulation(std::vector<std::string>& fileData, std::vector<int>& individial, int greatest) {
+    storeIndividual(fileData, individial);
+    greatest = findGreatest(individial);
+
+    return greatest;
 }
 
 //move data from vector of strings to vector of ints for calculations
@@ -90,10 +107,4 @@ int findGreatest(std::vector<int>& individual) {
 void display(int greatest) {
     std::cout << "The elf carrying the most is carrying \"" << greatest << "\" calories.";
 }
-
-
-
-
-
-
 
