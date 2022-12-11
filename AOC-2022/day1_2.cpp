@@ -1,125 +1,52 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 
-void fileOperations(std::ifstream&, std::vector<std::string>&);
-
-void openFile(std::ifstream&);
-void closeFile(std::ifstream&);
-void readFile(std::ifstream&, std::vector<std::string>&);
-
-void dataManipulation(std::vector<std::string>&, std::vector<int>&, std::vector<int>&);
-
-void convertVecs(std::vector<std::string>&, std::vector<int>&);
-void sortVec(std::vector<int>&);
-void findTopThree(std::vector<int>&, std::vector<int>&);
-
-void display(std::vector<int>&);
-
-int main() {
-    //object for reading data from the input file
-    std::ifstream input;
+std::vector<std::string> readFile(const std::string& fileName) {
     std::vector<std::string> fileData;
 
-    //open the file, read and store the data into a vector of strings, close the file
-    fileOperations(input, fileData);
+    std::string currentLine;
 
-    //container to store how much individial elf is carrying
-    std::vector<int> individual;
-    //container to store the top three amounts
-    std::vector<int> topThree;
+    std::ifstream input(fileName);
 
-    //converts data read from file from strings to ints, sorts the ints from greatest to least,
-    //and finds and stores the top three amounts in a vec
-    dataManipulation(fileData, individual, topThree);
-
-    //display the three largest calorie amounts
-    display(topThree);
-
-    return 0;
-}
-
-void fileOperations(std::ifstream& input, std::vector<std::string>& fileData) {
-    openFile(input);
-    readFile(input, fileData);
-    closeFile(input);
-}
-
-//open the input file
-void openFile(std::ifstream& input) {
-    input.open("day1_input.txt");
-}
-
-//close the input file
-void closeFile(std::ifstream& input) {
-    input.close();
-}
-
-//read data from the input file into a vector of strings
-void readFile(std::ifstream& input, std::vector<std::string>& fileData) {
-    std::string tempStorage;
-
-    while(getline(input, tempStorage)) {
-        fileData.push_back(tempStorage);    
+    while(getline(input, currentLine)) {
+        fileData.push_back(currentLine);    
     }
+
+    return fileData;
 }
 
-void dataManipulation(std::vector<std::string>& fileData, std::vector<int>& individial, std::vector<int>& topThree) {
-    convertVecs(fileData, individial);
-    sortVec(individial);
-    findTopThree(individial, topThree);
-}
-
-//converts the data from strings to ints
-void convertVecs(std::vector<std::string>& fileData, std::vector<int>& individual) {
-    //variable to keep count of the current elfs calories
+std::vector<int> findTopThree(std::vector<std::string>& fileData) { 
+    std::vector<int> individual;
     int currentCount = 0;
 
-    //loop to move through and transfer data between vectors
-    for(int i = 0; i < fileData.size(); i++) {
-        if(fileData.at(i).empty()) {
+    for(auto& i : fileData) {
+        if(i.empty()) {
             individual.push_back(currentCount);
             currentCount = 0;
         }
         else {
-            currentCount += stoi(fileData.at(i));
+            currentCount += stoi(i);
         }
     }
+
+    sort(individual.begin(), individual.end(), std::greater<int>());
+
+    std::vector<int> topThree(individual.begin(), individual.begin() + 3);
+
+    return topThree;
 }
 
-//sorts the vec of ints from greatest to least
-void sortVec(std::vector<int>& individual) {
-    //loop to determine which vec element to start the new sort pass from
-    for(int i = 0; i < individual.size(); i++) {
-        //loop to move through and sort the vec starting from the position defined in the first loop
-        for(int j = 0; j < individual.size() - 1; j++) {
-            //if the element after the current one is larger, swap the places
-            if(individual.at(j) < individual.at(j + 1)) {
-                std::swap(individual.at(j), individual.at(j + 1));
-            }
-        }
+int main() {
+    std::vector<std::string> fileData = readFile("day1_input.txt");
+    std::vector<int> topThree = findTopThree(fileData);
+
+    std::cout << "The top three calorie amounts were:\n";
+    for (auto& i: topThree) {
+        std::cout << i << " ";
     }
+    std::cout << "\n\nThe total amount is: " << topThree[0] + topThree[1] + topThree[2];
+
+    return 0;
 }
-
-//finds and stores top three amounts in a vec
-void findTopThree(std::vector<int>& individual, std::vector<int>& topThree) {
-    //store the top three amounts
-    for(int i = 0; i < 3; i++) {
-        topThree.push_back(individual.at(i));
-    }
-}
-
-//display the greatest amount of calories to the user
-void display(std::vector<int>& topThree) {
-    std::cout << "The three largest calorie amounts were:\n";
-
-    //display top three amounts
-    for(int i = 0; i < topThree.size(); i++) {
-        std::cout << i + 1 << " -> " << topThree.at(i) << std::endl;
-    }
-
-    //display total amount of top three
-    std::cout << "\nThe total amount of calories between the three is:\n"
-              << topThree.at(0) + topThree.at(1) + topThree.at(2);
-}
-

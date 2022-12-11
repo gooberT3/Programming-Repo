@@ -14,8 +14,6 @@ std::vector<std::string> readFile(const std::string& fileName) {
         fileData.push_back(currentLine);    
     }
 
-    input.close();
-
     return fileData;
 }
 
