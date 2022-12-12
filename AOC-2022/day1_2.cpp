@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <algorithm>
 
 std::vector<std::string> readFile(const std::string& fileName) {
     std::vector<std::string> fileData;
